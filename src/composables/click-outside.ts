@@ -10,31 +10,27 @@ interface Options {
 }
 
 export function useClickOutside(target: TemplateRef, listener: Listener, options: Options = {}) {
-  if (!isClient)
-    return noop
+  if (!isClient) return noop
   useIosWorkaround()
 
   const { ignore = [], isActive = true } = options
 
   const onPointerDown: Listener = (e) => {
-    if (!toValue(isActive))
-      return
+    if (!toValue(isActive)) return
 
     const _target = toValue(target)
-    if (!_target)
-      return
+    if (!_target) return
 
     const path = e.composedPath()
-    if (path.includes(_target))
-      return
+    if (path.includes(_target)) return
 
     const shouldIgnore = toValue(ignore).some((templateRef) => {
       const el = toValue(templateRef)
       return el && path.includes(el)
     })
 
-    if (!shouldIgnore)
-      listener(e)
+    if (!shouldIgnore) return
+    listener(e)
   }
 
   const unregister = addWindowEventListener(onPointerDown)
@@ -48,19 +44,20 @@ let isIOSWorkaroundActive = false
 function useIosWorkaround() {
   if (!isIOSWorkaroundActive && isIOS) {
     isIOSWorkaroundActive = true
-    Array.from(document.body.children).forEach(el => el.addEventListener('click', noop))
+    Array.from(document.body.children).forEach((el) => el.addEventListener('click', noop))
   }
 }
 
 let isAttached = false
 const listeners: Listener[] = []
 function sharedListener(e: PointerEvent) {
-  listeners.forEach(cb => cb(e))
+  listeners.forEach((cb) => cb(e))
 }
 
 function addWindowEventListener(listener: Listener) {
-  if (!listeners.includes(listener))
+  if (!listeners.includes(listener)) {
     listeners.push(listener)
+  }
 
   if (!isAttached) {
     window.addEventListener('pointerdown', sharedListener, { capture: true })
