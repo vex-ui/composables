@@ -34,7 +34,7 @@ export function useClickOutside(target: TemplateRef, listener: Listener, options
     listener(e)
   }
 
-  const unregister = addWindowEventListener(onPointerDown)
+  const unregister = addGlobalEventListener(onPointerDown)
 
   onScopeDispose(unregister)
   return unregister
@@ -55,7 +55,7 @@ function sharedListener(e: PointerEvent) {
   listeners.forEach((cb) => cb(e))
 }
 
-function addWindowEventListener(listener: Listener) {
+function addGlobalEventListener(listener: Listener) {
   if (!listeners.includes(listener)) {
     listeners.push(listener)
   }
