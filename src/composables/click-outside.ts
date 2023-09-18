@@ -29,7 +29,8 @@ export function useClickOutside(target: TemplateRef, listener: Listener, options
       return el && path.includes(el)
     })
 
-    if (!shouldIgnore) return
+    if (shouldIgnore) return
+
     listener(e)
   }
 
@@ -60,14 +61,14 @@ function addWindowEventListener(listener: Listener) {
   }
 
   if (!isAttached) {
-    window.addEventListener('pointerdown', sharedListener, { capture: true })
+    document.addEventListener('pointerdown', sharedListener, { capture: true })
     isAttached = true
   }
 
   return () => {
     remove(listeners, listener)
     if (!listeners.length) {
-      window.removeEventListener('pointerdown', sharedListener, { capture: true })
+      document.removeEventListener('pointerdown', sharedListener, { capture: true })
       isAttached = false
     }
   }
