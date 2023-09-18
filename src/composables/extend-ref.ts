@@ -22,27 +22,24 @@ export interface ExtendRefOptions<Unwrap extends boolean = boolean> {
  * Overload 1: Unwrap set to false
  */
 export function extendRef<
-  R extends Ref<any>,
-  Extend extends object,
-  Options extends ExtendRefOptions<false>
+  R extends Ref<any>, Extend extends object, Options extends ExtendRefOptions<false>,
 >(ref: R, extend: Extend, options?: Options): ShallowUnwrapRef<Extend> & R
 /**
  * Overload 2: Unwrap unset or set to true
  */
 export function extendRef<
-  R extends Ref<any>,
-  Extend extends object,
-  Options extends ExtendRefOptions
+  R extends Ref<any>, Extend extends object, Options extends ExtendRefOptions,
 >(ref: R, extend: Extend, options?: Options): Extend & R
 
 // implementation
 export function extendRef<R extends Ref<any>, Extend extends object>(
   ref: R,
   extend: Extend,
-  { enumerable = false, unwrap = true }: ExtendRefOptions = {}
+  { enumerable = false, unwrap = true }: ExtendRefOptions = {},
 ) {
   for (const [key, value] of Object.entries(extend)) {
-    if (key === 'value') continue
+    if (key === 'value')
+      continue
 
     if (isRef(value) && unwrap) {
       Object.defineProperty(ref, key, {
@@ -54,7 +51,8 @@ export function extendRef<R extends Ref<any>, Extend extends object>(
         },
         enumerable,
       })
-    } else {
+    }
+    else {
       Object.defineProperty(ref, key, { value, enumerable })
     }
   }

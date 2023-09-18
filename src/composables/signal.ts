@@ -1,6 +1,6 @@
-import type { Signal } from '@/types'
-import { shallowRef, type Ref } from 'vue'
+import { type Ref, shallowRef } from 'vue'
 import { isFunction } from './helpers'
+import type { Signal } from '@/types'
 
 export function useSignal<T>(initial: T): Signal<T> {
   const r = shallowRef(initial)

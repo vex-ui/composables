@@ -1,5 +1,5 @@
-import type { Getter } from '@/types'
 import { watch } from 'vue'
+import type { Getter } from '@/types'
 
 interface UseDropdownOptions {
   role: 'menu' | 'listbox'
@@ -15,31 +15,33 @@ interface UseDropdownOptions {
 export function useDropdownAria(
   TargetEl: Getter<HTMLElement | null>,
   Dropdown: Getter<HTMLElement | null>,
-  options: UseDropdownOptions
+  options: UseDropdownOptions,
 ) {
   const { ariaActiveDescendant, dropdownID, targetElID, role, ariaExpanded } = options
 
   watch(
     TargetEl,
     (el) => {
-      if (!el) return
+      if (!el)
+        return
       el.setAttribute('aria-expanded', `${ariaExpanded()}`)
       el.setAttribute('aria-controls', `${dropdownID}`)
       el.setAttribute('aria-haspopup', `${role}`)
       el.setAttribute('id', `${targetElID}`)
     },
-    { immediate: true }
+    { immediate: true },
   )
 
   watch(
     Dropdown,
     (el) => {
-      if (!el) return
+      if (!el)
+        return
       el.setAttribute('aria-labelledby', `${targetElID}`)
       el.setAttribute('role', `${role}`)
       el.setAttribute('id', `${dropdownID}`)
     },
-    { immediate: true }
+    { immediate: true },
   )
 
   watch(ariaExpanded, (isExpanded) => {

@@ -6,19 +6,19 @@ const INVALID_VNODE_TYPES: VNodeTypes[] = [Fragment, Comment, Text, 'template']
 export function useInjectRef(
   setTemplateRef: (vm: HTMLElement | ComponentPublicInstance | null) => void,
   slot: () => VNode[] | undefined,
-  component: string
+  component: string,
 ) {
   const Trigger = () => {
     const vNodes = slot()
-    if (!vNodes || vNodes.length !== 1 || INVALID_VNODE_TYPES.includes(vNodes[0].type)) {
+    if (!vNodes || vNodes.length !== 1 || INVALID_VNODE_TYPES.includes(vNodes[0].type))
       throw new Error(`[vex] <${component}> requires exactly a single root child at all times`)
-    }
+
     return cloneVNode(
       vNodes[0],
       {
         ref: setTemplateRef,
       },
-      true
+      true,
     )
   }
 

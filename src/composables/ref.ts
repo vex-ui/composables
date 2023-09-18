@@ -1,6 +1,6 @@
 // ported from @vueuse/core - refWithControl
 
-import { customRef, type Ref, type ShallowUnwrapRef } from 'vue'
+import { type Ref, type ShallowUnwrapRef, customRef } from 'vue'
 import { extendRef } from './extend-ref'
 import type { Fn } from '@/types'
 
@@ -24,7 +24,7 @@ export type ControlledRef<T> = ShallowUnwrapRef<{
   peek: () => T
   lay: (v: T) => void
 }> &
-  Ref<T>
+Ref<T>
 
 /**
  * Read or write without triggering reactivity.
@@ -52,21 +52,25 @@ export function useRef<T>(initial: T, options: UseRefOptions<T> = {}): Controlle
   })
 
   function get(tracking = true) {
-    if (tracking) track()
+    if (tracking)
+      track()
     return source
   }
 
   function set(value: T, triggering = true) {
-    if (value === source) return
+    if (value === source)
+      return
 
     const old = source
-    if (options.onBeforeChange?.(value, old) === false) return // dismissed
+    if (options.onBeforeChange?.(value, old) === false)
+      return // dismissed
 
     source = value
 
     options.onChanged?.(value, old)
 
-    if (triggering) trigger()
+    if (triggering)
+      trigger()
   }
 
   /**
@@ -85,6 +89,6 @@ export function useRef<T>(initial: T, options: UseRefOptions<T> = {}): Controlle
       peek,
       lay,
     },
-    { enumerable: true }
+    { enumerable: true },
   )
 }

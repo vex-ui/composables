@@ -1,5 +1,5 @@
-import type { Fn, MaybeRefOrGetter } from '@/types'
 import { onScopeDispose, toValue } from 'vue'
+import type { Fn, MaybeRefOrGetter } from '@/types'
 
 interface Options {
   defaultShowDelay?: MaybeRefOrGetter<number | undefined>
@@ -24,22 +24,20 @@ export function useDelayedOpen(show: Fn, hide: Fn, options: Options = {}) {
       clearTimeouts()
       const _delay = delay ?? toValue(defaultShowDelay)
 
-      if (_delay === 0) {
+      if (_delay === 0)
         show()
-      } else {
+      else
         showTimeoutID = setTimeout(show, _delay)
-      }
     },
 
     hide: (delay?: number) => {
       clearTimeouts()
       const _delay = delay ?? toValue(defaultHideDelay)
 
-      if (_delay === 0) {
+      if (_delay === 0)
         hide()
-      } else {
+      else
         hideTimeoutID = setTimeout(hide, _delay)
-      }
     },
   }
 }

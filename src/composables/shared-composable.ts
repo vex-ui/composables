@@ -1,4 +1,5 @@
-import { EffectScope, effectScope, onScopeDispose } from 'vue'
+import type { EffectScope } from 'vue'
+import { effectScope, onScopeDispose } from 'vue'
 
 /**
  * Make a composable function usable with multiple Vue instances.

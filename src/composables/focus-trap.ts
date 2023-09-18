@@ -1,11 +1,11 @@
-import { createFocusTrap, type Options, type FocusTrap } from 'focus-trap'
-import { onUnmounted, toRef, watch, type MaybeRefOrGetter } from 'vue'
+import { type FocusTrap, type Options, createFocusTrap } from 'focus-trap'
+import { type MaybeRefOrGetter, onUnmounted, toRef, watch } from 'vue'
 
 const trapStack: FocusTrap[] = []
 
 export function useFocusTrap(
   target: MaybeRefOrGetter<HTMLElement | null | undefined>,
-  options: Options = {}
+  options: Options = {},
 ) {
   let trap: FocusTrap | null = null
   const TargetEl = toRef(target)
@@ -13,7 +13,8 @@ export function useFocusTrap(
   watch(
     TargetEl,
     (el, prevEl) => {
-      if (!el) return
+      if (!el)
+        return
       if (trap && el !== prevEl) {
         trap.updateContainerElements(el)
         return
@@ -22,14 +23,15 @@ export function useFocusTrap(
       trap = createFocusTrap(el, { ...options, trapStack })
       trapStack.push(trap)
     },
-    { flush: 'post' }
+    { flush: 'post' },
   )
 
   onUnmounted(() => {
     if (trap) {
       trap.deactivate()
       const index = trapStack.indexOf(trap)
-      if (index !== -1) trapStack.splice(index, 1)
+      if (index !== -1)
+        trapStack.splice(index, 1)
       trap = null
     }
   })

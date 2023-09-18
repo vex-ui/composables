@@ -6,9 +6,12 @@ import {
   shift,
   size,
   useFloating as useFloatingUi,
+} from '@floating-ui/vue'
+import type {
+  Middleware, Placement,
   type UseFloatingReturn,
 } from '@floating-ui/vue'
-import type { Middleware, Placement } from '@floating-ui/vue'
+
 import { onClickOutside, useEventListener } from '@vueuse/core'
 import { computed, onScopeDispose, toRef } from 'vue'
 import type { ComputedRef, MaybeRefOrGetter, Ref, StyleValue } from 'vue'
@@ -87,23 +90,22 @@ export function useFloating(
   Trigger: MaybeRefOrGetter<HTMLElement | null>,
   floating: MaybeRefOrGetter<HTMLElement | null>,
   opt: UseFloatingOptions,
-  arrow?: MaybeRefOrGetter<HTMLElement | null>
+  arrow?: MaybeRefOrGetter<HTMLElement | null>,
 ): UseFloatingReturn & { arrowStyles?: ComputedRef<StyleValue> } {
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
 
   const TriggerEl = toRef(Trigger)
   const FloatingEl = toRef(floating)
   const ArrowEl = arrow ? toRef(arrow) : null
 
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
   // 📌 visibility
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
 
   // TODO: move this functionality out
   useEventListener(FloatingEl, 'click', () => {
-    if (opt.hideOnClick) {
+    if (opt.hideOnClick)
       isFloatingElVisible.value = false
-    }
   })
 
   if (opt.toggleAction === 'click') {
@@ -116,7 +118,7 @@ export function useFloating(
       () => {
         isFloatingElVisible.value = false
       },
-      { ignore: [TriggerEl] }
+      { ignore: [TriggerEl] },
     )
   }
 
@@ -143,9 +145,9 @@ export function useFloating(
     })
   }
 
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
   // 📌 middleware
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
 
   const middleware = computed<Middleware[]>(() => {
     const mw = [offset(opt.offset), flip(), shift({ padding: 8 })]
@@ -156,20 +158,19 @@ export function useFloating(
           apply({ rects, elements }) {
             elements.floating.style.minWidth = `${Math.round(rects.reference.width)}px`
           },
-        })
+        }),
       )
     }
 
-    if (ArrowEl) {
+    if (ArrowEl)
       mw.push(arrowMiddleware({ element: ArrowEl, padding: opt.arrowPadding }))
-    }
 
     return mw
   })
 
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
   // 📌 floating-ui
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
 
   const data = useFloatingUi(TriggerEl, FloatingEl, {
     placement: opt.placement,
@@ -178,9 +179,9 @@ export function useFloating(
     open: isFloatingElVisible,
   })
 
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
   // 📌 arrow
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
 
   let arrowStyles: ComputedRef<StyleValue> | null = null
 
@@ -190,8 +191,8 @@ export function useFloating(
 
     arrowStyles = computed<StyleValue>(() => {
       const side = data.placement.value.split('-')[0]
-      const staticSide =
-        {
+      const staticSide
+        = {
           top: 'bottom',
           right: 'left',
           bottom: 'top',
@@ -202,19 +203,20 @@ export function useFloating(
         position: 'absolute',
         left: arrowX.value != null ? `${arrowX.value}px` : '',
         top: arrowY.value != null ? `${arrowY.value}px` : '',
-        [staticSide]: `-2px`,
+        [staticSide]: '-2px',
       }
     })
   }
 
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
 
   if (arrowStyles) {
     return {
       arrowStyles,
       ...data,
     }
-  } else {
+  }
+  else {
     return {
       ...data,
     }

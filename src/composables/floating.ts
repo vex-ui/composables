@@ -1,4 +1,3 @@
-import type { MaybeRefOrGetter } from '@/types'
 import type {
   Middleware,
   MiddlewareData,
@@ -9,16 +8,17 @@ import type {
 } from '@floating-ui/vue'
 import { arrow, autoUpdate, computePosition, flip, offset, shift, size } from '@floating-ui/vue'
 import {
+  type StyleValue,
+  onScopeDispose,
   ref,
   shallowReadonly,
   shallowRef,
   toRef,
   toValue,
   watch,
-  type StyleValue,
-  onScopeDispose,
 } from 'vue'
 import { useMemo } from '.'
+import type { MaybeRefOrGetter } from '@/types'
 
 export interface FloatingStyles {
   position: Strategy
@@ -43,7 +43,7 @@ export interface UseFloatingOptions {
 
   /**
    * These are plain objects that modify the positioning coordinates in some fashion, or provide useful data for the consumer to use.
-   *  *DO NOT USE SIZE MIDDLEWARE HERE*, use the autoMinWidth option.
+   *  DO NOT USE SIZE MIDDLEWARE HERE*, use the autoMinWidth option.
    */
   middleware?: MaybeRefOrGetter<Middleware[]>
 
@@ -67,9 +67,9 @@ export function useFloating(
     placement: 'bottom-start',
     strategy: 'absolute',
     offset: 4,
-  }
+  },
 ) {
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
 
   const FloatingEl = toRef(floating)
   const ReferenceEl = toRef(reference)
@@ -88,10 +88,10 @@ export function useFloating(
   const middlewareData = shallowRef<MiddlewareData>({})
   const isPositioned = ref(false)
 
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
   // 📌 middleware
   // TODO: maybe default middleware could be abstracted into a separate module?
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
 
   const _middleware = useMemo(() => {
     const mw = [offset(toValue(options.offset) || 4), flip(), shift({ padding: 8 })]
@@ -103,23 +103,22 @@ export function useFloating(
           apply({ rects, elements }) {
             elements.floating.style.setProperty(
               '--vex-auto-min-width',
-              `${Math.round(rects.reference.width)}px`
+              `${Math.round(rects.reference.width)}px`,
             )
           },
-        })
+        }),
       )
     }
 
-    if (middleware.value) {
+    if (middleware.value)
       mw.push(...middleware.value)
-    }
 
     return mw
   })
 
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
   // 📌 floating styles
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
 
   const floatingStyles = useMemo(getFloatingStyles, [x, y], {
     flush: 'pre',
@@ -132,7 +131,8 @@ export function useFloating(
       top: '0',
     }
 
-    if (!isFloatingElVisible.value || !FloatingEl.value) return initialStyles
+    if (!isFloatingElVisible.value || !FloatingEl.value)
+      return initialStyles
 
     const xVal = roundByDPR(FloatingEl.value, x.value)
     const yVal = roundByDPR(FloatingEl.value, y.value)
@@ -148,12 +148,13 @@ export function useFloating(
     }
   }
 
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
   // 📌 update
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
 
   function update() {
-    if (!isFloatingElVisible.value || !FloatingEl.value || !ReferenceEl.value) return
+    if (!isFloatingElVisible.value || !FloatingEl.value || !ReferenceEl.value)
+      return
 
     computePosition(ReferenceEl.value, FloatingEl.value, {
       middleware: _middleware(),
@@ -171,9 +172,9 @@ export function useFloating(
 
   watch([middleware, placement, strategy], update)
 
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
   // 📌 attach
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
 
   let autoUpdateCleanup: (() => void) | undefined
 
@@ -181,18 +182,18 @@ export function useFloating(
     autoUpdateCleanup?.()
     autoUpdateCleanup = undefined
 
-    if (!visible || !floating || !reference) return
+    if (!visible || !floating || !reference)
+      return
     autoUpdateCleanup = autoUpdate(reference, floating, update)
   })
 
   onScopeDispose(() => autoUpdateCleanup?.())
 
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
 
   watch(isFloatingElVisible, (visible) => {
-    if (!visible) {
+    if (!visible)
       isPositioned.value = false
-    }
   })
 
   return {
@@ -207,11 +208,11 @@ export function useFloating(
   }
 }
 
-//----------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------
 // 📌 arrow
-//----------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------
 
-type ArrowOptions = {
+interface ArrowOptions {
   element: MaybeRefOrGetter<HTMLElement | null>
   padding?: Padding
 }
@@ -224,14 +225,15 @@ type ArrowOptions = {
  */
 export function arrowMiddleware(
   arrowEl: MaybeRefOrGetter<HTMLElement | null>,
-  padding: Padding = 0
+  padding: Padding = 0,
 ) {
   return {
     name: 'arrow',
     options: {},
     fn(args: MiddlewareState) {
       const element = toValue(arrowEl)
-      if (!element) return {}
+      if (!element)
+        return {}
 
       return arrow({
         element,
@@ -243,7 +245,7 @@ export function arrowMiddleware(
 
 export function useArrow(
   middlewareData: MaybeRefOrGetter<MiddlewareData>,
-  placement: MaybeRefOrGetter<Placement>
+  placement: MaybeRefOrGetter<Placement>,
 ) {
   const _placement = toRef(placement)
   const _middlewareData = toRef(middlewareData)
@@ -253,8 +255,8 @@ export function useArrow(
     const y = _middlewareData.value.arrow?.y ?? null
 
     const side = _placement.value.split('-')[0]
-    const staticSide =
-      {
+    const staticSide
+      = {
         top: 'bottom',
         right: 'left',
         bottom: 'top',
@@ -266,22 +268,22 @@ export function useArrow(
       position: 'absolute',
       left: x ? `${x}px` : '',
       top: y ? `${y}px` : '',
-      [staticSide]: `-1px`,
+      [staticSide]: '-1px',
     }
   })
 
   return styles
 }
 
-//----------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------
 // 📌 utils
-//----------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------
 
 // DPR = device pixel ratio
 function getDPR(el: HTMLElement) {
-  if (typeof window === 'undefined') {
+  if (typeof window === 'undefined')
     return 1
-  }
+
   const win = el.ownerDocument.defaultView || window
   return win.devicePixelRatio || 1
 }

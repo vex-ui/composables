@@ -1,6 +1,6 @@
 import type { ComponentPublicInstance } from 'vue'
-import { useSignal } from '.'
 import { getElementFromRef } from './helpers'
+import { useSignal } from '.'
 import type { ComputableGetter } from '@/types'
 
 export type getTemplateRef = ComputableGetter<HTMLElement | null>

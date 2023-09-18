@@ -1,4 +1,4 @@
-import { ref, type Ref } from 'vue'
+import { type Ref, ref } from 'vue'
 import { useClickOutside } from '../click-outside'
 
 describe('useClickOutside', { retries: 0 }, () => {
@@ -44,28 +44,28 @@ describe('useClickOutside', { retries: 0 }, () => {
 
   afterEach(() => {})
 
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
 
   it('should call the callback when a click happens outside the target', () => {
     cy.get('[cy-outside]').click()
     cy.wrap(callback).should('have.been.calledOnce')
   })
 
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
 
   it('should not call the callback when a click happens inside the target', () => {
     cy.get('[cy-target]').click()
     cy.wrap(callback).should('not.have.been.called')
   })
 
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
 
   it('should not call the callback when a click happens on an element in the ignore list', () => {
     cy.get('[cy-ignore]').click()
     cy.wrap(callback).should('not.have.been.called')
   })
 
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
 
   it('should not call the callback when the isActive option is set to false', () => {
     active.value = false
@@ -73,7 +73,7 @@ describe('useClickOutside', { retries: 0 }, () => {
     cy.wrap(callback).should('not.have.been.called')
   })
 
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
 
   it('handles toggling isActive option', () => {
     cy.get('[cy-outside]').click()
@@ -94,7 +94,7 @@ describe('useClickOutside', { retries: 0 }, () => {
     cy.wrap(callback).should('not.have.been.calledOnce')
   })
 
-  //----------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------
 
   it('should remove the event listener when the component is unmounted', () => {
     mounted.value = false

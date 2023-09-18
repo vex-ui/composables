@@ -1,5 +1,5 @@
+import { type Ref, watch } from 'vue'
 import type { Getter } from '@/types'
-import { watch, type Ref } from 'vue'
 
 type PrimitiveValue = string | number | boolean | symbol
 
@@ -21,7 +21,7 @@ export interface SelectionGroup<T> {
  */
 export function useSelectionGroup<T extends PrimitiveValue>(
   selected: Ref<T[]>,
-  options: Options = {}
+  options: Options = {},
 ): SelectionGroup<T> {
   const deselection = options.deselection ?? (() => false)
   const multiselect = options.multiselect ?? (() => false)
@@ -57,7 +57,7 @@ export function useSelectionGroup<T extends PrimitiveValue>(
   }
 }
 
-//===
+// ===
 
 export abstract class SelectionStrategy<T> {
   constructor(protected selected: Ref<T[]>) {}
@@ -66,7 +66,7 @@ export abstract class SelectionStrategy<T> {
   abstract select(value: T, deselectOnReselect: boolean): void
 }
 
-//===
+// ===
 
 export class SingleSelect<T> extends SelectionStrategy<T> {
   isSelected(value: T): boolean {
@@ -79,16 +79,17 @@ export class SingleSelect<T> extends SelectionStrategy<T> {
 
   select(value: T, deselectOnReselect: boolean): void {
     if (this.isSelected(value)) {
-      if (deselectOnReselect) {
+      if (deselectOnReselect)
         this.deselect()
-      }
-    } else {
+    }
+    
+    else {
       this.selected.value = [value]
     }
   }
 }
 
-//===
+// ===
 
 export class MultiSelect<T> extends SelectionStrategy<T> {
   isSelected(value: T): boolean {
@@ -96,14 +97,13 @@ export class MultiSelect<T> extends SelectionStrategy<T> {
   }
 
   deselect(value: T): void {
-    this.selected.value = this.selected.value.filter((_value) => _value !== value)
+    this.selected.value = this.selected.value.filter(_value => _value !== value)
   }
 
   select(value: T): void {
-    if (this.isSelected(value)) {
+    if (this.isSelected(value))
       this.deselect(value)
-    } else {
+    else
       this.selected.value = [...this.selected.value, value]
-    }
   }
 }

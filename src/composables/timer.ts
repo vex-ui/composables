@@ -31,7 +31,8 @@ export function useTimer(duration: number, cb: () => void): TimerControls {
   }
 
   function pause() {
-    if (remainingTime === 0 || !isRunning.value) return
+    if (remainingTime === 0 || !isRunning.value)
+      return
 
     isRunning.value = false
     clearTimeout(timeoutId)
@@ -39,7 +40,8 @@ export function useTimer(duration: number, cb: () => void): TimerControls {
   }
 
   function resume() {
-    if (remainingTime === 0 || isRunning.value) return
+    if (remainingTime === 0 || isRunning.value)
+      return
     start()
   }
 

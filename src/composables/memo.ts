@@ -1,6 +1,6 @@
-import type { Fn, Getter } from '@/types'
 import type { WatchOptions, WatchSource } from 'vue'
 import { computed, customRef, watch } from 'vue'
+import type { Fn, Getter } from '@/types'
 
 /**
  * Memoize the return value of a function,
@@ -17,7 +17,7 @@ export function useMemo<T>(
   source?: WatchSource | WatchSource[],
   options: WatchOptions = {
     flush: 'sync',
-  }
+  },
 ): Getter<T> {
   if (!source) {
     const internalRef = computed<T>(fn)
@@ -30,11 +30,11 @@ export function useMemo<T>(
 
   watch(
     source,
-    function update() {
+    () => {
       dirty = true
       trigger()
     },
-    options
+    options,
   )
 
   const internalRef = customRef<T>((track, _trigger) => {

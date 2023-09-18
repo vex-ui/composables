@@ -1,7 +1,7 @@
-import type { Getter, TemplateRef } from '@/types'
 import { computed, shallowReactive } from 'vue'
+import type { Getter, TemplateRef } from '@/types'
 
-export type Item<T extends HTMLElement> = {
+export interface Item<T extends HTMLElement> {
   id: string
   templateRef: TemplateRef<T>
   disabled?: Getter<boolean>
@@ -18,7 +18,7 @@ export class Collection<T extends HTMLElement = HTMLElement> {
       const el = ref.value
       el != null && arr.push(el)
       return arr
-    }, [])
+    }, []),
   )
 
   constructor(id: string) {
@@ -42,5 +42,5 @@ export class Collection<T extends HTMLElement = HTMLElement> {
 }
 
 // FIXME: remove this
-export const createCollection = () => {}
-export const useCollection = () => {}
+export function createCollection() {}
+export function useCollection() {}

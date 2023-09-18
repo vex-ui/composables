@@ -1,6 +1,5 @@
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useDelayedOpen } from '../delayed-open'
-import { nextTick } from 'vue'
 
 describe('Delayed Open', () => {
   let state: 'hide' | 'show' | undefined
