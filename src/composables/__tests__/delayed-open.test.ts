@@ -1,5 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import { useDelayedOpen } from '../delayed-open'
+import { nextTick } from 'vue'
 
 describe('Delayed Open', () => {
   let state: 'hide' | 'show' | undefined
@@ -7,9 +8,14 @@ describe('Delayed Open', () => {
   let hide: () => void
 
   beforeEach(() => {
+    vi.useFakeTimers()
     state = undefined
     show = vi.fn(() => (state = 'show'))
     hide = vi.fn(() => (state = 'hide'))
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
   })
 
   it('does not throw an error when called', () => {
@@ -24,7 +30,10 @@ describe('Delayed Open', () => {
   })
 
   it('invokes the callbacks sync when delay is 0', () => {
-    const delayed = useDelayedOpen(show, hide, { defaultHideDelay: 0, defaultShowDelay: 0 })
+    const delayed = useDelayedOpen(show, hide, {
+      defaultHideDelay: 0,
+      defaultShowDelay: 0,
+    })
 
     delayed.show()
     expect(state).toBe('show')
@@ -34,18 +43,21 @@ describe('Delayed Open', () => {
   })
 
   it('invokes the callbacks async when delay is > 0', async () => {
-    const delayed = useDelayedOpen(show, hide, { defaultHideDelay: 1, defaultShowDelay: 1 })
+    const delayed = useDelayedOpen(show, hide, {
+      defaultHideDelay: 100,
+      defaultShowDelay: 100,
+    })
 
     delayed.show()
-    // show is async so its callback is not yet called
-    vi.useFakeTimers()
-    expect(state).toBeUndefined()
-    vi.runAllTimers()
-    expect(state).toBe('show')
+    expect(show).not.toHaveBeenCalled()
+
+    vi.advanceTimersByTime(100)
+    expect(show).toHaveBeenCalledOnce()
 
     delayed.hide()
-    expect(state).toBe('show')
-    await vi.runAllTimersAsync()
-    expect(state).toBe('hide')
+    expect(hide).not.toHaveBeenCalled()
+
+    vi.advanceTimersByTime(100)
+    expect(hide).toHaveBeenCalledOnce()
   })
 })
