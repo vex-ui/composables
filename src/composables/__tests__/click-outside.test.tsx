@@ -1,11 +1,11 @@
-import { type Ref, ref } from 'vue'
+import { type Ref, ref, nextTick } from 'vue'
 import { useClickOutside } from '../click-outside'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { render, screen, fireEvent } from '@testing-library/vue'
 
 // FIXME: jsdom has a lot of limitation when it comes to pointer events
 // find an in browser test environment for these tests
-describe.todo('useClickOutside', () => {
+describe('useClickOutside', () => {
   const component = {
     props: ['callback', 'active', 'mounted'],
     setup(p: any) {
@@ -18,18 +18,10 @@ describe.todo('useClickOutside', () => {
       })
 
       return () => (
-        <div style={{ padding: '20px' }}>
-          {p.mounted.value && (
-            <div style={{ width: '100px', height: '100px' }} el-inside ref={target}>
-              target, active: {`${p.active.value}`}
-            </div>
-          )}
-          <div style={{ width: '100px', height: '100px' }} el-outside>
-            outside
-          </div>
-          <div style={{ width: '100px', height: '100px' }} el-ignore ref={ignore}>
-            ignore
-          </div>
+        <div>
+          <div>outside</div>
+          {p.mounted.value && <div ref={target}>inside</div>}
+          <div ref={ignore}>ignore</div>
         </div>
       )
     },
@@ -38,33 +30,35 @@ describe.todo('useClickOutside', () => {
   let active: Ref<boolean>
   let mounted: Ref<boolean>
   let callback: ReturnType<typeof vi.fn>
-  let wrapper: ReturnType<typeof mount>
 
   beforeEach(() => {
     active = ref(true)
     mounted = ref(true)
     callback = vi.fn()
-    wrapper = mount(component, { props: { callback, active, mounted } })
+    render(component, { props: { callback, active, mounted } })
   })
 
   // ----------------------------------------------------------------------------------------------------
 
   it('should call the callback when a click happens outside the target', async () => {
-    await wrapper.find('[el-outside]').trigger('click')
+    const outside = screen.getByText('outside')
+    await fireEvent.pointerDown(outside)
     expect(callback).toHaveBeenCalledOnce()
   })
 
   // ----------------------------------------------------------------------------------------------------
 
   it('should not call the callback when a click happens inside the target', async () => {
-    await wrapper.find('[el-inside]').trigger('click')
+    const inside = screen.getByText('inside')
+    await fireEvent.pointerDown(inside)
     expect(callback).not.toHaveBeenCalled()
   })
 
   // ----------------------------------------------------------------------------------------------------
 
   it('should not call the callback when a click happens on an ignored element', async () => {
-    await wrapper.find('[el-ignore]').trigger('click')
+    const ignore = screen.getByText('ignore')
+    await fireEvent.pointerDown(ignore)
     expect(callback).not.toHaveBeenCalled()
   })
 
@@ -72,24 +66,24 @@ describe.todo('useClickOutside', () => {
 
   it('should not call the callback when the isActive option is set to false', async () => {
     active.value = false
-    await wrapper.find('[el-outside]').trigger('click')
+    const outside = screen.getByText('outside')
+    await fireEvent.pointerDown(outside)
     expect(callback).not.toHaveBeenCalled()
   })
 
   // ----------------------------------------------------------------------------------------------------
 
   it('handles toggling isActive option', async () => {
-    const outsideEl = wrapper.find('[el-outside]')
-
-    await outsideEl.trigger('click')
+    const outside = screen.getByText('outside')
+    await fireEvent.pointerDown(outside)
     expect(callback).toHaveBeenCalledOnce()
 
     active.value = false
-    await outsideEl.trigger('click')
+    await fireEvent.pointerDown(outside)
     expect(callback).toHaveBeenCalledOnce()
 
     active.value = true
-    await outsideEl.trigger('click')
+    await fireEvent.pointerDown(outside)
     expect(callback).toHaveBeenCalledTimes(2)
   })
 
@@ -97,8 +91,10 @@ describe.todo('useClickOutside', () => {
 
   it('should not call the callback when the element is unmounted', async () => {
     mounted.value = false
+    await nextTick()
 
-    await wrapper.find('[el-outside]').trigger('click')
+    const outside = screen.getByText('outside')
+    await fireEvent.pointerDown(outside)
     expect(callback).not.toHaveBeenCalled()
   })
 })
