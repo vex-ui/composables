@@ -18,7 +18,7 @@ export class Collection<T extends HTMLElement = HTMLElement> {
       const el = ref.value
       el != null && arr.push(el)
       return arr
-    }, []),
+    }, [])
   )
 
   constructor(id: string) {
