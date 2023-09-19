@@ -1,16 +1,18 @@
-import { useSignal } from './signal'
+import { isClient } from '@/utils'
+import { ref } from 'vue'
 
-const [isUsingKeyboard, setIsUsingKeyboard] = useSignal(false)
+export const isUsingKeyboard = ref(false)
 
 function onKeydown() {
-  setIsUsingKeyboard(true)
+  isUsingKeyboard.value = true
   document.addEventListener('pointerdown', onPointer, { capture: true, once: true })
 }
 
 function onPointer() {
-  setIsUsingKeyboard(false)
+  isUsingKeyboard.value = false
   document.addEventListener('keydown', onKeydown, { capture: true, once: true })
 }
-onPointer()
 
-export { isUsingKeyboard }
+if (isClient) {
+  onPointer()
+}
