@@ -8,11 +8,7 @@ interface Options {
   orientation?: Getter<Orientation>
 }
 
-export function useKeydownIntent(
-  target: TemplateRef,
-  listener: Listener,
-  options: Options = {}
-): Fn {
+export function useKeyIntent(target: TemplateRef, listener: Listener, options: Options = {}): Fn {
   return useEventListener(target, 'keydown', (e: KeyboardEvent) => {
     const key = e.key
     if (!isNavigationKey(key)) return
