@@ -7,37 +7,51 @@ import { onScopeDispose, readonly, ref } from 'vue'
  */
 export function useTimer(duration: number, cb: () => void) {
   let startTime = 0
-  let remainingTime = duration
+  let remainingTime = 0
   let timeoutID: ReturnType<typeof setTimeout>
   const isRunning = ref(false)
 
   const start = () => {
-    isRunning.value = true
+    if (isRunning.value) {
+      console.warn('[vex] timer is already running, make sure to `stop` it first')
+      return
+    }
+
     startTime = Date.now()
+    remainingTime = duration
 
     timeoutID = setTimeout(() => {
       stop()
       cb()
     }, remainingTime)
+
+    isRunning.value = true
   }
 
   const stop = () => {
     clearTimeout(timeoutID)
-    isRunning.value = false
     remainingTime = 0
+    isRunning.value = false
   }
 
   const pause = () => {
     if (remainingTime === 0 || !isRunning.value) return
 
     clearTimeout(timeoutID)
-    isRunning.value = false
     remainingTime -= Date.now() - startTime
+    isRunning.value = false
   }
 
   const resume = () => {
     if (remainingTime === 0 || isRunning.value) return
-    start()
+    startTime = Date.now()
+
+    timeoutID = setTimeout(() => {
+      stop()
+      cb()
+    }, remainingTime)
+
+    isRunning.value = true
   }
 
   onScopeDispose(stop)
