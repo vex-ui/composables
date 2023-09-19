@@ -2,7 +2,7 @@ import { watchDebounced } from '@vueuse/core'
 import { type Ref, readonly, ref } from 'vue'
 import { isFunction } from '@/utils'
 
-interface UseInputSearchOptions {
+interface Options {
   search?: (data: Suggestion[], query: string, limit: number) => Suggestion[]
   debounce: () => number
   onCleanup?: () => void
@@ -19,7 +19,7 @@ interface Suggestion {
 export function useInputSearch(
   query: Ref<string | undefined>,
   suggestions: Suggestion[] | ((query: string, limit: number) => Promise<Suggestion[]>),
-  options: UseInputSearchOptions
+  options: Options
 ) {
   const result = ref<Suggestion[]>([])
   const isSearching = ref(false)
