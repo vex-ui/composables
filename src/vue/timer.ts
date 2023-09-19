@@ -1,4 +1,4 @@
-import { onUnmounted, readonly, ref } from 'vue'
+import { onScopeDispose, readonly, ref } from 'vue'
 
 /**
  * Custom hook to create a timer with the given duration and callback.
@@ -40,7 +40,7 @@ export function useTimer(duration: number, cb: () => void) {
     start()
   }
 
-  onUnmounted(stop)
+  onScopeDispose(stop)
 
   return {
     stop,
