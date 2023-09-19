@@ -22,9 +22,9 @@ export function useTimer(duration: number, cb: () => void) {
   }
 
   const stop = () => {
+    clearTimeout(timeoutID)
     isRunning.value = false
     remainingTime = 0
-    clearTimeout(timeoutID)
   }
 
   const pause = () => {
