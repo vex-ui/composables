@@ -3,8 +3,6 @@ import { useClickOutside } from '../click-outside'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/vue'
 
-// FIXME: jsdom has a lot of limitation when it comes to pointer events
-// find an in browser test environment for these tests
 describe('useClickOutside', () => {
   const component = {
     props: ['callback', 'active', 'mounted'],
