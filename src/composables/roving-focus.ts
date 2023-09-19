@@ -1,6 +1,6 @@
 import { useEventListener } from '@vueuse/core'
 import type { Ref } from 'vue'
-import { wrapArray } from './helpers'
+import { wrapArray } from '@/utils'
 import { useKeydownIntent } from './keydown'
 import type { Getter, Orientation } from '@/types'
 
@@ -12,7 +12,7 @@ interface RovingFocusOptions {
 export function useRovingFocus(
   parent: Ref<HTMLElement | null>,
   children: Ref<HTMLElement[]>,
-  options: RovingFocusOptions = {},
+  options: RovingFocusOptions = {}
 ) {
   const { orientation, onEntryFocus } = options
 
@@ -55,17 +55,15 @@ export function useRovingFocus(
         }
       }
     },
-    { orientation },
+    { orientation }
   )
 }
 
 function focusFirst(elements: HTMLElement[]) {
   for (const el of elements) {
     const prevFocusedItem = document.activeElement
-    if (el === prevFocusedItem)
-      return
+    if (el === prevFocusedItem) return
     el.focus()
-    if (document.activeElement !== prevFocusedItem)
-      return
+    if (document.activeElement !== prevFocusedItem) return
   }
 }

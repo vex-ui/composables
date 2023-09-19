@@ -1,6 +1,6 @@
 import type { Ref } from 'vue'
 import { watch } from 'vue'
-import { isArray } from './helpers'
+import { isArray } from '@/utils'
 import type { Getter } from '@/types'
 
 type PrimitiveValue = string | number | boolean | symbol
@@ -27,7 +27,7 @@ export function createSelectScope() {}
  */
 export function useSelectionScope<T extends PrimitiveValue>(
   selected: Ref<T | T[] | undefined>,
-  options: UseSelectOptions = {},
+  options: UseSelectOptions = {}
 ): SelectScope<T> {
   const { multiselect = () => false, deselection = () => false } = options
 
@@ -36,7 +36,7 @@ export function useSelectionScope<T extends PrimitiveValue>(
 
     // multi-select
     if (Array.isArray(prev)) {
-      selected.value = prev.includes(next) ? prev.filter(v => v !== next) : [...prev, next]
+      selected.value = prev.includes(next) ? prev.filter((v) => v !== next) : [...prev, next]
       return
     }
 
@@ -47,18 +47,14 @@ export function useSelectionScope<T extends PrimitiveValue>(
     }
 
     // deselect
-    if (deselection())
-      resetSelected()
+    if (deselection()) resetSelected()
   }
 
   // validate the initial value and correct it if needed
   if (multiselect()) {
-    if (!isArray(selected.value))
-      selected.value = []
-  }
-  else {
-    if (isArray(selected.value))
-      selected.value = undefined
+    if (!isArray(selected.value)) selected.value = []
+  } else {
+    if (isArray(selected.value)) selected.value = undefined
   }
 
   const resetSelected = (multi?: boolean) => {

@@ -1,5 +1,5 @@
 import type { ComponentPublicInstance } from 'vue'
-import { getElementFromRef } from './helpers'
+import { getElementFromRef } from '@/utils'
 import { useSignal } from '.'
 import type { ComputableGetter } from '@/types'
 

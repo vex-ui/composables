@@ -1,5 +1,5 @@
 import { type Ref, getCurrentInstance, shallowRef } from 'vue'
-import { getKebabCase } from './helpers'
+import { getKebabCase } from '@/utils'
 import { useVModel } from './v-model'
 import type { Getter } from '@/types'
 
@@ -8,10 +8,7 @@ interface Options<T> {
   setter?: (newValue: T) => T
 }
 
-export function useControllableState<T>(
-  getter: Getter<T>,
-  options: Options<T> = {},
-): Ref<T> {
+export function useControllableState<T>(getter: Getter<T>, options: Options<T> = {}): Ref<T> {
   const { propName = 'modelValue', setter } = options
   const isControlled = hasVModelBound(propName)
 
@@ -24,11 +21,10 @@ function hasVModelBound(propName: string) {
   const vm = getCurrentInstance()
   const kebabPropName = getKebabCase(propName)
 
-  const hasPropBound
-    = hasOwn(vm?.vnode.props, propName) || hasOwn(vm?.vnode.props, kebabPropName)
-  const hasEventBound
-    = hasOwn(vm?.vnode.props, `onUpdate:${propName}`)
-    || hasOwn(vm?.vnode.props, `onUpdate:${kebabPropName}`)
+  const hasPropBound = hasOwn(vm?.vnode.props, propName) || hasOwn(vm?.vnode.props, kebabPropName)
+  const hasEventBound =
+    hasOwn(vm?.vnode.props, `onUpdate:${propName}`) ||
+    hasOwn(vm?.vnode.props, `onUpdate:${kebabPropName}`)
 
   return hasPropBound && hasEventBound
 }

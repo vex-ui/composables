@@ -1,6 +1,6 @@
 import { watchDebounced } from '@vueuse/core'
 import { type Ref, readonly, ref } from 'vue'
-import { isFunction } from './helpers'
+import { isFunction } from '@/utils'
 
 interface UseInputSearchOptions {
   search?: (data: Suggestion[], query: string, limit: number) => Suggestion[]
@@ -19,18 +19,17 @@ interface Suggestion {
 export function useInputSearch(
   query: Ref<string | undefined>,
   suggestions: Suggestion[] | ((query: string, limit: number) => Promise<Suggestion[]>),
-  options: UseInputSearchOptions,
+  options: UseInputSearchOptions
 ) {
   const result = ref<Suggestion[]>([])
   const isSearching = ref(false)
-  const { search, debounce, onCleanup, onAfterSearch, onBeforeSearch, maxDisplayedSuggestions }
-    = options
+  const { search, debounce, onCleanup, onAfterSearch, onBeforeSearch, maxDisplayedSuggestions } =
+    options
 
   watchDebounced(
     query,
     async (query, _, cleanup) => {
-      if (!query)
-        return
+      if (!query) return
 
       onBeforeSearch?.()
 
@@ -39,14 +38,13 @@ export function useInputSearch(
         isSearching.value = true
         await suggestions(query, maxDisplayedSuggestions?.())
         isSearching.value = false
-      }
-      else {
+      } else {
         result.value = (search ?? defaultSearch)(suggestions, query, maxDisplayedSuggestions?.())
       }
 
       onAfterSearch?.()
     },
-    { debounce },
+    { debounce }
   )
 
   return {
@@ -58,10 +56,8 @@ export function useInputSearch(
 function defaultSearch(data: Suggestion[], query: string, limit: number): Suggestion[] {
   const result = []
   for (const suggestion of data) {
-    if (suggestion.label.includes(query))
-      result.push(suggestion)
-    if (result.length >= limit)
-      break
+    if (suggestion.label.includes(query)) result.push(suggestion)
+    if (result.length >= limit) break
   }
   return result
 }

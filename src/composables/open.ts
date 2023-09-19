@@ -1,6 +1,6 @@
 import { useEventListener } from '@vueuse/core'
 import { nextTick } from 'vue'
-import { getKeyIntent } from './helpers'
+import { getKeyIntent } from '@/utils'
 import { useDelayedOpen } from '.'
 import type { ComputableSetter, Getter, Orientation } from '@/types'
 
@@ -21,7 +21,7 @@ export function useKeyboardOpen(
   trigger: Getter<HTMLElement | null>,
   content: Getter<HTMLElement | null>,
   setOpen: ComputableSetter<boolean>,
-  options: UseKeyboardOpenOptions = {},
+  options: UseKeyboardOpenOptions = {}
 ) {
   const { isMainTrigger, orientation = () => 'vertical' } = options
 
@@ -29,10 +29,8 @@ export function useKeyboardOpen(
     const orient = orientation()
 
     if (isMainTrigger) {
-      if (orient === 'vertical' && e.key !== 'ArrowDown' && e.key !== 'ArrowUp')
-        return
-      if (orient === 'horizontal' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')
-        return
+      if (orient === 'vertical' && e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return
+      if (orient === 'horizontal' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
 
       e.preventDefault()
       e.stopPropagation()
@@ -42,12 +40,10 @@ export function useKeyboardOpen(
     }
 
     const key = e.key as NavigationKeys
-    if (!NAVIGATION_KEYS.includes(key))
-      return
+    if (!NAVIGATION_KEYS.includes(key)) return
 
     const intent = getKeyIntent(key, orient)
-    if (intent !== 'show')
-      return
+    if (intent !== 'show') return
 
     e.preventDefault()
     e.stopPropagation()
@@ -57,14 +53,12 @@ export function useKeyboardOpen(
 
   // firefox bug
   useEventListener(trigger, 'keyup', (e: KeyboardEvent) => {
-    if (e.key === ' ')
-      e.preventDefault()
+    if (e.key === ' ') e.preventDefault()
   })
 
   useEventListener(content, 'keydown', (e: KeyboardEvent) => {
     const key = e.key as NavigationKeys
-    if (!NAVIGATION_KEYS.includes(key))
-      return
+    if (!NAVIGATION_KEYS.includes(key)) return
 
     const intent = getKeyIntent(key, orientation())
 
@@ -90,7 +84,7 @@ export function useHoverOpen(
   trigger: Getter<HTMLElement | null>,
   content: Getter<HTMLElement | null>,
   setOpen: ComputableSetter<boolean>,
-  options: UseHoverOpenOptions = {},
+  options: UseHoverOpenOptions = {}
 ) {
   const { showDelay = () => 150, hideDelay = () => 150 } = options
 
@@ -100,7 +94,7 @@ export function useHoverOpen(
     {
       defaultShowDelay: showDelay,
       defaultHideDelay: hideDelay,
-    },
+    }
   )
 
   useEventListener(trigger, 'pointerenter', () => show())

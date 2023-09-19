@@ -1,5 +1,5 @@
 import { type Ref, shallowRef } from 'vue'
-import { isFunction } from './helpers'
+import { isFunction } from '@/utils'
 import type { Signal } from '@/types'
 
 export function useSignal<T>(initial: T): Signal<T> {
