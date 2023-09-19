@@ -1,7 +1,7 @@
 import { useTextDirection } from '@vueuse/core'
 import { type ComponentPublicInstance, type WatchSource, isRef } from 'vue'
 import { EXPOSED_EL } from '@/config'
-import type { KeyIntent, MaybeRefOrGetter, NavigationKey, Orientation } from '@/types'
+import type { MaybeRefOrGetter } from '@/types'
 
 // ----------------------------------------------------------------------------------------------------
 
@@ -20,10 +20,6 @@ export const isIOS = /* #__PURE__ */ getIsIOS()
 // TODO: this should be a composable
 export const dir = /* #__PURE__ */ useTextDirection()
 
-export function isNavigationKey(v: string): v is NavigationKey {
-  return ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(v)
-}
-
 export function isWatchable<T>(v: MaybeRefOrGetter<T>): v is WatchSource<T> {
   return isRef(v) || isFunction(v)
 }
@@ -32,9 +28,9 @@ export function isWatchable<T>(v: MaybeRefOrGetter<T>): v is WatchSource<T> {
 
 export function getIsIOS() {
   return (
-    isClient
-    /* #__PURE__ */ && window?.navigator?.userAgent
-    /* #__PURE__ */ && /iP(ad|hone|od)/.test(/* #__PURE__ */ window.navigator.userAgent)
+    isClient &&
+    /* #__PURE__ */ window?.navigator?.userAgent &&
+    /* #__PURE__ */ /iP(ad|hone|od)/.test(/* #__PURE__ */ window.navigator.userAgent)
   )
 }
 
@@ -49,61 +45,18 @@ export function getRandomString(length: number): string {
 
 export function getElementFromRef(
   vm: ComponentPublicInstance | Element | null,
-  component: string,
+  component: string
 ): HTMLElement | null {
-  if (vm == null)
-    return null
-  if (vm instanceof Element)
-    return vm as HTMLElement
-  if (EXPOSED_EL in vm && vm[EXPOSED_EL] instanceof Element)
-    return vm[EXPOSED_EL] as HTMLElement
-  if (vm.$el instanceof Element)
-    return vm.$el as HTMLElement
+  if (vm == null) return null
+  if (vm instanceof Element) return vm as HTMLElement
+  if (EXPOSED_EL in vm && vm[EXPOSED_EL] instanceof Element) return vm[EXPOSED_EL] as HTMLElement
+  if (vm.$el instanceof Element) return vm.$el as HTMLElement
 
   throw new Error(`[vex] <${component}> has a non Element root child`)
 }
 
-// TODO: this should be a composable
-export function getDirectionAwareKey(key: NavigationKey) {
-  if (dir.value !== 'rtl')
-    return key
-  return key === 'ArrowLeft' ? 'ArrowRight' : key === 'ArrowRight' ? 'ArrowLeft' : key
-}
-
-// TODO: this should be a composable
-export function getKeyIntent(key: NavigationKey, orientation: Orientation = 'vertical'): KeyIntent {
-  switch (getDirectionAwareKey(key)) {
-    case 'ArrowDown':
-      if (orientation === 'vertical')
-        return 'next'
-      return 'show'
-
-    case 'ArrowUp':
-      if (orientation === 'vertical')
-        return 'prev'
-      return 'hide'
-
-    case 'ArrowRight':
-      if (orientation === 'vertical')
-        return 'show'
-      return 'next'
-
-    case 'ArrowLeft':
-      if (orientation === 'vertical')
-        return 'hide'
-      return 'prev'
-
-    case 'End':
-      return 'last'
-
-    case 'Home':
-      return 'first'
-  }
-}
-
 export function getKebabCase(str = '') {
-  if (getKebabCase.cache.has(str))
-    return getKebabCase.cache.get(str)!
+  if (getKebabCase.cache.has(str)) return getKebabCase.cache.get(str)!
   const kebab = str
     .replace(/[^a-z]/gi, '-')
     .replace(/\B([A-Z])/g, '-$1')
@@ -129,6 +82,5 @@ export function wrapArray<T>(array: T[], startIndex: number) {
  */
 export function remove<T>(array: T[], item: T) {
   const index = array.indexOf(item)
-  if (index > -1)
-    array.splice(index, 1)
+  if (index > -1) array.splice(index, 1)
 }

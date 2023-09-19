@@ -1,23 +1,58 @@
+import type { Fn, Getter, KeyIntent, NavigationKey, Orientation, TemplateRef } from '@/types'
+import { dir } from '@/utils'
 import { useEventListener } from '@vueuse/core'
-import type { Ref } from 'vue'
-import { getKeyIntent, isNavigationKey } from '@/utils'
-import type { Fn, Getter, KeyIntent, NavigationKey, Orientation } from '@/types'
 
-type keydownHandler = (e: KeyboardEvent, intent: KeyIntent, key: NavigationKey) => void
-interface UseKeydownIntentOptions {
+type Listener = (e: KeyboardEvent, intent: KeyIntent, key: NavigationKey) => void
+
+interface Options {
   orientation?: Getter<Orientation>
 }
 
 export function useKeydownIntent(
-  target: Ref<HTMLElement | null>,
-  handler: keydownHandler,
-  options: UseKeydownIntentOptions = {}
+  target: TemplateRef,
+  listener: Listener,
+  options: Options = {}
 ): Fn {
   return useEventListener(target, 'keydown', (e: KeyboardEvent) => {
     const key = e.key
     if (!isNavigationKey(key)) return
 
     const intent = getKeyIntent(key, options.orientation?.())
-    handler(e, intent, key)
+    listener(e, intent, key)
   })
+}
+
+function getKeyIntent(key: NavigationKey, orientation: Orientation = 'vertical'): KeyIntent {
+  switch (getDirectionAwareKey(key)) {
+    case 'ArrowDown':
+      if (orientation === 'vertical') return 'next'
+      return 'show'
+
+    case 'ArrowUp':
+      if (orientation === 'vertical') return 'prev'
+      return 'hide'
+
+    case 'ArrowRight':
+      if (orientation === 'vertical') return 'show'
+      return 'next'
+
+    case 'ArrowLeft':
+      if (orientation === 'vertical') return 'hide'
+      return 'prev'
+
+    case 'End':
+      return 'last'
+
+    case 'Home':
+      return 'first'
+  }
+}
+
+function getDirectionAwareKey(key: NavigationKey) {
+  if (dir.value !== 'rtl') return key
+  return key === 'ArrowLeft' ? 'ArrowRight' : key === 'ArrowRight' ? 'ArrowLeft' : key
+}
+
+function isNavigationKey(v: string): v is NavigationKey {
+  return ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(v)
 }
