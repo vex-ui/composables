@@ -1,7 +1,7 @@
 import { useEventListener } from '@vueuse/core'
 import type { Ref } from 'vue'
 import { wrapArray } from '@/utils'
-import { useKeydownIntent } from './keydown'
+import { useKeyIntent } from './key-intent'
 import type { Getter, Orientation } from '@/types'
 
 interface RovingFocusOptions {
@@ -20,7 +20,7 @@ export function useRovingFocus(
     onEntryFocus ? onEntryFocus(e, focusFirst) : focusFirst(children.value)
   })
 
-  useKeydownIntent(
+  useKeyIntent(
     parent,
     (e, intent) => {
       e.preventDefault()
