@@ -30,8 +30,8 @@ export function useTimer(duration: number, cb: () => void) {
   const pause = () => {
     if (remainingTime === 0 || !isRunning.value) return
 
-    isRunning.value = false
     clearTimeout(timeoutID)
+    isRunning.value = false
     remainingTime -= Date.now() - startTime
   }
 
