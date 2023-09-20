@@ -18,7 +18,7 @@ export function useKeyIntent(target: TemplateRef, listener: Listener, options: O
   })
 }
 
-function getKeyIntent(key: NavigationKey, orientation: Orientation = 'vertical'): KeyIntent {
+export function getKeyIntent(key: NavigationKey, orientation: Orientation = 'vertical'): KeyIntent {
   switch (getDirectionAwareKey(key)) {
     case 'ArrowDown':
       if (orientation === 'vertical') return 'next'
