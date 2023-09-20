@@ -1,8 +1,8 @@
 import { useEventListener } from '@vueuse/core'
 import { nextTick } from 'vue'
-import { getKeyIntent } from '@/utils'
+import { getKeyIntent } from './key-intent'
 import { useDelayedOpen } from '.'
-import type { ComputableSetter, Getter, Orientation } from '@/types'
+import type { Getter, Orientation, Setter } from '@/types'
 
 // ----------------------------------------------------------------------------------------------------
 // 📌 keyboard
@@ -20,7 +20,7 @@ interface UseKeyboardOpenOptions {
 export function useKeyboardOpen(
   trigger: Getter<HTMLElement | null>,
   content: Getter<HTMLElement | null>,
-  setOpen: ComputableSetter<boolean>,
+  setOpen: Setter<boolean>,
   options: UseKeyboardOpenOptions = {}
 ) {
   const { isMainTrigger, orientation = () => 'vertical' } = options
@@ -83,7 +83,7 @@ interface UseHoverOpenOptions {
 export function useHoverOpen(
   trigger: Getter<HTMLElement | null>,
   content: Getter<HTMLElement | null>,
-  setOpen: ComputableSetter<boolean>,
+  setOpen: Setter<boolean>,
   options: UseHoverOpenOptions = {}
 ) {
   const { showDelay = () => 150, hideDelay = () => 150 } = options
