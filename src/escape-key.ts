@@ -5,14 +5,14 @@ import { noop, remove } from '@/utils'
 type Listener = (e: KeyboardEvent) => void
 
 const listeners: Listener[] = []
-let isActive = false
+let isAttached = false
 
 export function useEscapeKey(listener: Listener): () => void {
   if (!isClient) return noop
 
-  if (!isActive) {
+  if (!isAttached) {
     document.addEventListener('keydown', onEscape)
-    isActive = true
+    isAttached = true
   }
 
   listeners.push(listener)
