@@ -40,7 +40,3 @@ export class Collection<T extends HTMLElement = HTMLElement> {
     this.#collection.delete(templateRef)
   }
 }
-
-// FIXME: remove this
-export function createCollection() {}
-export function useCollection() {}

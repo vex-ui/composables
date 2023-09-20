@@ -1,5 +1,5 @@
 export { useClickOutside } from './click-outside'
-export { createCollection, useCollection } from './collection'
+export { Collection } from './collection'
 export { useContext } from './context'
 export { useControllableState } from './controllable-state'
 export { useDelayedOpen } from './delayed-open'

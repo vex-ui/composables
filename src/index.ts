@@ -1,11 +1,8 @@
 export {
-  useVModel,
+  Collection,
   isUsingKeyboard,
-  type SelectionGroup,
-  createCollection,
   useBodyScrollbar,
   useClickOutside,
-  useCollection,
   useContext,
   useControllableState,
   useDelayedOpen,
@@ -20,4 +17,6 @@ export {
   useRovingFocus,
   useSelectionGroup,
   useTimer,
+  useVModel,
+  type SelectionGroup,
 } from './vue'
