@@ -8,12 +8,12 @@ interface Options {
   deselection?: Getter<boolean>
 }
 
-export interface SelectionGroup<T> {
+export interface SelectionGroup<T extends PrimitiveValue> {
+  select: (value: T) => void
+  selected: Ref<T[]>
+  deselect: (value: T) => void
   isSelected: (value: T) => boolean
   clearSelected: () => void
-  select: (value: T) => void
-  deselect: (value: T) => void
-  selected: Ref<T[]>
 }
 
 /**
@@ -21,7 +21,7 @@ export interface SelectionGroup<T> {
  */
 export function useSelectionGroup<T extends PrimitiveValue>(
   selected: Ref<T[]>,
-  options: Options = {},
+  options: Options = {}
 ): SelectionGroup<T> {
   const deselection = options.deselection ?? (() => false)
   const multiselect = options.multiselect ?? (() => false)
@@ -59,16 +59,16 @@ export function useSelectionGroup<T extends PrimitiveValue>(
 
 // ===
 
-export abstract class SelectionStrategy<T> {
+export abstract class SelectionStrategy<T extends PrimitiveValue> {
   constructor(protected selected: Ref<T[]>) {}
+  abstract select(value: T, deselectOnReselect: boolean): void
   abstract deselect(value: T): void
   abstract isSelected(value: T): boolean
-  abstract select(value: T, deselectOnReselect: boolean): void
 }
 
 // ===
 
-export class SingleSelect<T> extends SelectionStrategy<T> {
+export class SingleSelect<T extends PrimitiveValue> extends SelectionStrategy<T> {
   isSelected(value: T): boolean {
     return this.selected.value.includes(value)
   }
@@ -79,11 +79,8 @@ export class SingleSelect<T> extends SelectionStrategy<T> {
 
   select(value: T, deselectOnReselect: boolean): void {
     if (this.isSelected(value)) {
-      if (deselectOnReselect)
-        this.deselect()
-    }
-    
-    else {
+      deselectOnReselect && this.deselect()
+    } else {
       this.selected.value = [value]
     }
   }
@@ -91,19 +88,20 @@ export class SingleSelect<T> extends SelectionStrategy<T> {
 
 // ===
 
-export class MultiSelect<T> extends SelectionStrategy<T> {
+export class MultiSelect<T extends PrimitiveValue> extends SelectionStrategy<T> {
   isSelected(value: T): boolean {
     return this.selected.value.includes(value)
   }
 
   deselect(value: T): void {
-    this.selected.value = this.selected.value.filter(_value => _value !== value)
+    this.selected.value = this.selected.value.filter((_value) => _value !== value)
   }
 
   select(value: T): void {
-    if (this.isSelected(value))
+    if (this.isSelected(value)) {
       this.deselect(value)
-    else
+    } else {
       this.selected.value = [...this.selected.value, value]
+    }
   }
 }
