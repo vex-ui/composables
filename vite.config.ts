@@ -17,6 +17,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, 'src/index'),
       formats: ['cjs', 'es'],
+      fileName: 'index',
     },
     rollupOptions: {
       external: ['vue'],
