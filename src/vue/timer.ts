@@ -13,7 +13,9 @@ export function useTimer(duration: number, cb: () => void) {
 
   const start = () => {
     if (isRunning.value) {
-      console.warn('[vex] timer is already running, make sure to `stop` it first')
+      if (import.meta.env.DEV) {
+        console.warn('[vex] timer is already running, make sure to `stop` it first')
+      }
       return
     }
 
