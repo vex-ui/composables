@@ -1,42 +1,44 @@
 import { computed, shallowReactive } from 'vue'
 import type { Getter, TemplateRef } from '@/types'
 
-export interface Item<T extends HTMLElement> {
+export interface CollectionItem<T extends HTMLElement> {
   id: string
   templateRef: TemplateRef<T>
   disabled?: Getter<boolean>
 }
 
-export class Collection<T extends HTMLElement = HTMLElement> {
-  #id: string
-  #count: number = 0
-  #collection = shallowReactive<Map<TemplateRef<T>, Item<T>>>(new Map())
+export function useCollection<T extends HTMLElement = HTMLElement>(id: string) {
+  let count = 0
+  const collection = shallowReactive<Map<TemplateRef<T>, CollectionItem<T>>>(new Map())
 
-  items = computed(() => [...this.#collection.values()])
-  elements = computed(() =>
-    [...this.#collection.keys()].reduce<T[]>((arr, ref) => {
+  const items = computed(() => [...collection.values()])
+  const elements = computed(() =>
+    [...collection.keys()].reduce<T[]>((arr, ref) => {
       const el = ref.value
       el != null && arr.push(el)
       return arr
     }, [])
   )
 
-  constructor(id: string) {
-    this.#id = id
+  const generateID = (): string => {
+    return `${id}-${count++}`
   }
 
-  private generateID(): string {
-    return `${this.#id}-${this.#count++}`
-  }
-
-  add(templateRef: TemplateRef<T>, disabled?: Getter<boolean>): Item<T> {
-    const id = this.generateID()
+  const add = (templateRef: TemplateRef<T>, disabled?: Getter<boolean>): CollectionItem<T> => {
+    const id = generateID()
     const item = { id, templateRef, disabled }
-    this.#collection.set(templateRef, item)
+    collection.set(templateRef, item)
     return item
   }
 
-  remove(templateRef: TemplateRef<T>): void {
-    this.#collection.delete(templateRef)
+  const remove = (templateRef: TemplateRef<T>): void => {
+    collection.delete(templateRef)
+  }
+
+  return {
+    add,
+    remove,
+    items,
+    elements,
   }
 }

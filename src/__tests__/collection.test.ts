@@ -1,22 +1,18 @@
 // Collection.spec.ts
 import { beforeEach, describe, expect, it } from 'vitest'
 import { ref } from 'vue'
-import { Collection } from '../collection'
+import { useCollection } from '../collection'
 
 describe('Collection', () => {
-  let collection: Collection<HTMLElement>
+  let collection: ReturnType<typeof useCollection<HTMLElement>>
 
   beforeEach(() => {
-    collection = new Collection<HTMLElement>('myCollection')
+    collection = useCollection<HTMLElement>('myCollection')
   })
 
   // ----------------------------------------------------------------------------------------------------
   // 📌 basic tests
   // ----------------------------------------------------------------------------------------------------
-
-  it('should correctly instantiate', () => {
-    expect(collection).toBeInstanceOf(Collection)
-  })
 
   it('should return all elements of the collection', () => {
     const templateRef1 = ref(document.createElement('div'))
@@ -34,7 +30,7 @@ describe('Collection', () => {
   // ----------------------------------------------------------------------------------------------------
 
   describe('add', () => {
-    it('should add new item to the collection', () => {
+    it('should add item to the collection', () => {
       const item = collection.add(ref(document.createElement('div')))
 
       expect(collection.items.value).toHaveLength(1)
@@ -60,7 +56,7 @@ describe('Collection', () => {
       expect(item.disabled).toBeUndefined()
     })
 
-    it('should retain previously added items when a new item is added', () => {
+    it('should retain previously added items when a item is added', () => {
       const item1 = ref(document.createElement('div'))
       const item2 = ref(document.createElement('span'))
       const item3 = ref(document.createElement('p'))
@@ -141,26 +137,26 @@ describe('Collection', () => {
       collection.add(templateRef1)
       collection.remove(templateRef1)
 
-      // Add new item and check id, id should be 'myCollection-1' not 'myCollection-0'
+      // Add item and check id, id should be 'myCollection-1' not 'myCollection-0'
       const item = collection.add(ref(document.createElement('div')))
       expect(item.id).toBe('myCollection-1')
     })
 
     it('should generate id starting with the collection name', () => {
-      const customCollection = new Collection<HTMLElement>('customID')
+      const customCollection = useCollection<HTMLElement>('customID')
       const item = customCollection.add(ref(document.createElement('div')))
       expect(item.id.startsWith('customID')).toBe(true)
     })
 
     it('should generate incremental id for each collection instance separately', () => {
       // One instance
-      const collection1 = new Collection<HTMLElement>('instance1')
+      const collection1 = useCollection<HTMLElement>('instance1')
       collection1.add(ref(document.createElement('div')))
       const item2 = collection1.add(ref(document.createElement('div')))
       expect(item2.id).toBe('instance1-1')
 
       // Another instance
-      const collection2 = new Collection<HTMLElement>('instance2')
+      const collection2 = useCollection<HTMLElement>('instance2')
       const item1inInstance2 = collection2.add(ref(document.createElement('div')))
       expect(item1inInstance2.id).toBe('instance2-0')
     })
