@@ -1,6 +1,5 @@
 import { onScopeDispose } from 'vue'
-import { isClient } from '@vueuse/core'
-import { noop, remove } from '@/utils'
+import { noop, remove, isClient } from '@/utils'
 
 type Listener = (e: KeyboardEvent) => void
 
