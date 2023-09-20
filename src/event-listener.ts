@@ -1,14 +1,15 @@
-import type { Fn } from '@/types'
-import { isWatchable, noop, isClient } from '@/utils'
-import { onScopeDispose, watch, type MaybeRefOrGetter } from 'vue'
+import type { Fn, TemplateRef } from '@/types'
+import { isClient, noop } from '@/utils'
+import { onScopeDispose, watch } from 'vue'
 
-type EventListener<E extends keyof HTMLElementEventMap> = (evt: HTMLElementEventMap[E]) => void
+type Listener<E extends keyof HTMLElementEventMap> = (e: HTMLElementEventMap[E]) => void
+type Options = AddEventListenerOptions
 
-export function useEventListener<Event extends keyof HTMLElementEventMap>(
-  target: MaybeRefOrGetter<HTMLElement | null>,
-  event: Event,
-  listener: EventListener<Event>,
-  options?: AddEventListenerOptions
+export function useEventListener<E extends keyof HTMLElementEventMap>(
+  target: TemplateRef,
+  event: E,
+  listener: Listener<E>,
+  options?: Options
 ): Fn {
   if (!isClient) return noop
   let unregister = noop
@@ -19,25 +20,21 @@ export function useEventListener<Event extends keyof HTMLElementEventMap>(
     return () => el.removeEventListener(event, listener, options)
   }
 
-  if (isWatchable(target)) {
-    stopWatch = watch(
-      target,
-      (el) => {
-        unregister()
-        if (!el) return
-        unregister = register(el)
-      },
-      { immediate: true, flush: 'post' }
-    )
-  } else {
-    target && (unregister = register(target))
-  }
+  stopWatch = watch(
+    target,
+    (el) => {
+      unregister()
+      if (!el) return
+      unregister = register(el)
+    },
+    { immediate: true, flush: 'post' }
+  )
 
-  const stop = () => {
+  const cleanup = () => {
     stopWatch()
     unregister()
   }
 
-  onScopeDispose(stop)
-  return stop
+  onScopeDispose(cleanup)
+  return cleanup
 }
