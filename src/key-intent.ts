@@ -1,6 +1,6 @@
 import type { Fn, Getter, KeyIntent, NavigationKey, Orientation, TemplateRef } from '@/types'
 import { dir } from '@/utils'
-import { useEventListener } from '@vueuse/core'
+import { useEventListener } from '.'
 
 type Listener = (e: KeyboardEvent, intent: KeyIntent, key: NavigationKey) => void
 

@@ -1,4 +1,4 @@
-import { useEventListener } from '@vueuse/core'
+import { useEventListener } from '.'
 import type { Ref } from 'vue'
 import { wrapArray } from '@/utils'
 import { useKeyIntent } from './key-intent'

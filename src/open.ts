@@ -1,4 +1,4 @@
-import { useEventListener } from '@vueuse/core'
+import { useEventListener } from '.'
 import { nextTick } from 'vue'
 import { getKeyIntent } from './key-intent'
 import { useDelayedOpen } from '.'

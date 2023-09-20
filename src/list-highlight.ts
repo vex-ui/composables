@@ -1,4 +1,4 @@
-import { useEventListener } from '@vueuse/core'
+import { useEventListener } from '.'
 import { type Ref, watch } from 'vue'
 import { isFunction } from '@/utils'
 
