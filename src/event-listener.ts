@@ -1,34 +1,58 @@
-import type { Fn, TemplateRef } from '@/types'
-import { isClient, noop } from '@/utils'
+import type { Fn, MaybeRefOrGetter } from '@/types'
+import { isClient, isWatchable, noop } from '@/utils'
 import { onScopeDispose, watch } from 'vue'
 
-type Listener<E extends keyof HTMLElementEventMap> = (e: HTMLElementEventMap[E]) => void
 type Options = AddEventListenerOptions
 
-export function useEventListener<E extends keyof HTMLElementEventMap>(
-  target: TemplateRef,
+export function useEventListener<E extends keyof WindowEventMap>(
+  target: Window,
   event: E,
-  listener: Listener<E>,
+  listener: (e: WindowEventMap[E]) => void,
+  options?: Options
+): Fn
+
+export function useEventListener<E extends keyof DocumentEventMap>(
+  target: Document,
+  event: E,
+  listener: (e: DocumentEventMap[E]) => void,
+  options?: Options
+): Fn
+
+export function useEventListener<E extends keyof HTMLElementEventMap>(
+  target: MaybeRefOrGetter<HTMLElement | null>,
+  event: E,
+  listener: (e: HTMLElementEventMap[E]) => void,
+  options?: Options
+): Fn
+
+export function useEventListener(
+  target: MaybeRefOrGetter<HTMLElement | null> | Document | Window,
+  event: string,
+  listener: (e: unknown) => void,
   options?: Options
 ): Fn {
-  if (!isClient) return noop
+  if (!target || !isClient) return noop
+
   let unregister = noop
   let stopWatch = noop
 
-  const register = (el: HTMLElement) => {
+  const register = (el: HTMLElement | Window | Document) => {
     el.addEventListener(event, listener, options)
     return () => el.removeEventListener(event, listener, options)
   }
 
-  stopWatch = watch(
-    target,
-    (el) => {
-      unregister()
-      if (!el) return
-      unregister = register(el)
-    },
-    { immediate: true, flush: 'post' }
-  )
+  if (target === window || target === document || !isWatchable(target)) {
+    unregister = register(target)
+  } else {
+    stopWatch = watch(
+      target,
+      (el) => {
+        unregister()
+        el && (unregister = register(el))
+      },
+      { immediate: true, flush: 'post' }
+    )
+  }
 
   const cleanup = () => {
     stopWatch()
