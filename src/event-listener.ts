@@ -31,7 +31,7 @@ export function useEventListener(
   listener: (e: unknown) => void,
   options?: Options
 ): Fn {
-  if (!target || !isClient) return noop
+  if (!isClient || !target) return noop
 
   let unregister = noop
   let stopWatch = noop
