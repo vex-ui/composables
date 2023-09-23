@@ -8,11 +8,13 @@ export type Dir = 'ltr' | 'rtl' | 'auto' | undefined
 export const useTextDirection = createSharedComposable(() => {
   if (!isClient) return ref<Dir>()
 
-  let dir = getDir()
+  let dir = getDocumentDir()
   let trigger: Fn = noop
 
   const updateDir = () => {
-    dir = getDir()
+    const newDir = getDocumentDir()
+    if (newDir === dir) return
+    dir = newDir
     trigger()
   }
 
@@ -38,21 +40,20 @@ export const useTextDirection = createSharedComposable(() => {
         return dir
       },
       set(v) {
+        if (v === dir) return
         dir = v
-        if (document) {
-          setDir(dir)
-          _trigger()
-        }
+        setDocumentDir(dir)
+        _trigger()
       },
     }
   })
 })
 
-function getDir(): Dir {
+function getDocumentDir(): Dir {
   return document?.querySelector('html')?.getAttribute('dir') as Dir
 }
 
-function setDir(dir: Dir): void {
+function setDocumentDir(dir: Dir): void {
   if (dir) {
     document?.querySelector('html')?.setAttribute('dir', dir)
   } else {
