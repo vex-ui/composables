@@ -1,8 +1,8 @@
-import { useEventListener } from '.'
-import type { Ref } from 'vue'
-import { wrapArray } from '@/utils'
-import { useKeyIntent } from './key-intent'
 import type { Getter, Orientation } from '@/types'
+import { wrapArray } from '@/utils'
+import type { Ref } from 'vue'
+import { useEventListener } from '.'
+import { useKeyIntent } from './key-intent'
 
 interface RovingFocusOptions {
   onEntryFocus?: (e: FocusEvent, focusFirst: (items: HTMLElement[]) => void) => void
@@ -26,6 +26,7 @@ export function useRovingFocus(
       e.preventDefault()
       e.stopPropagation()
 
+      // TODO: fastest way to shallow clone an array?
       let elements = [...children.value]
 
       switch (intent) {
