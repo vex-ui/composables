@@ -1,22 +1,16 @@
-import { type ComponentPublicInstance, type WatchSource, isRef } from 'vue'
 import { EXPOSED_EL } from '@/config'
 import type { MaybeRefOrGetter } from '@/types'
+import { isRef, type ComponentPublicInstance, type WatchSource } from 'vue'
 
 // ----------------------------------------------------------------------------------------------------
 
-export function noop() {}
-
+export const noop = () => {}
 export const isClient = typeof window !== 'undefined'
-
 export const isString = (v: unknown): v is string => typeof v === 'string'
-
 export const isFunction = (v: unknown): v is Function => v instanceof Function
-
 export const isArray = Array.isArray
-
-export const isIOS = /* #__PURE__ */ getIsIOS()
-
-export function isWatchable<T>(v: MaybeRefOrGetter<T>): v is WatchSource<T> {
+export const isIOS = getIsIOS()
+export const isWatchable = <T>(v: MaybeRefOrGetter<T>): v is WatchSource<T> => {
   return isRef(v) || isFunction(v)
 }
 
@@ -24,9 +18,7 @@ export function isWatchable<T>(v: MaybeRefOrGetter<T>): v is WatchSource<T> {
 
 export function getIsIOS() {
   return (
-    isClient &&
-    /* #__PURE__ */ window?.navigator?.userAgent &&
-    /* #__PURE__ */ /iP(ad|hone|od)/.test(/* #__PURE__ */ window.navigator.userAgent)
+    isClient && window?.navigator?.userAgent && /iP(ad|hone|od)/.test(window.navigator.userAgent)
   )
 }
 
