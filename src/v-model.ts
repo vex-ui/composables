@@ -13,7 +13,7 @@ export function useVModel<T>(getter: Getter<T>, options: UseVModelOptions<T> = {
   const emit = vm?.emit || (vm as any)?.$emit?.bind(vm) || vm?.proxy?.$emit?.bind(vm?.proxy)
 
   if (!emit) {
-    throw new Error('[vex] `useVModel` Cannot find emit function on Vue instance.')
+    throw new Error('[vex] `useVModel` Cannot find emit function on component instance.')
   }
 
   return computed<T>({
