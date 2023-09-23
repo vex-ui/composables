@@ -1,6 +1,5 @@
 import type { Fn, Getter, KeyIntent, NavigationKey, Orientation, TemplateRef } from '@/types'
-import { dir } from '@/utils'
-import { useEventListener } from '.'
+import { useEventListener, useTextDirection } from '.'
 
 type Listener = (e: KeyboardEvent, intent: KeyIntent, key: NavigationKey) => void
 
@@ -45,6 +44,7 @@ export function getKeyIntent(key: NavigationKey, orientation: Orientation = 'ver
 }
 
 function getDirectionAwareKey(key: NavigationKey) {
+  const dir = useTextDirection()
   if (dir.value !== 'rtl') return key
   return key === 'ArrowLeft' ? 'ArrowRight' : key === 'ArrowRight' ? 'ArrowLeft' : key
 }

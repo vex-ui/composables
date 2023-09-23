@@ -1,4 +1,3 @@
-import { useTextDirection } from '@vueuse/core'
 import { type ComponentPublicInstance, type WatchSource, isRef } from 'vue'
 import { EXPOSED_EL } from '@/config'
 import type { MaybeRefOrGetter } from '@/types'
@@ -16,9 +15,6 @@ export const isFunction = (v: unknown): v is Function => v instanceof Function
 export const isArray = Array.isArray
 
 export const isIOS = /* #__PURE__ */ getIsIOS()
-
-// TODO: this should be a composable
-export const dir = /* #__PURE__ */ useTextDirection()
 
 export function isWatchable<T>(v: MaybeRefOrGetter<T>): v is WatchSource<T> {
   return isRef(v) || isFunction(v)
