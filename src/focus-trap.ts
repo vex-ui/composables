@@ -1,44 +1,47 @@
-// import { type FocusTrap, type Options, createFocusTrap } from 'focus-trap'
-// import { type MaybeRefOrGetter, onUnmounted, toRef, watch } from 'vue'
+import { isWatchable, remove } from '@/utils'
+import type { Options as $Options, FocusTrap } from 'focus-trap'
+import { createFocusTrap } from 'focus-trap'
+import type { MaybeRefOrGetter } from 'vue'
+import { onScopeDispose, watch } from 'vue'
 
-// const trapStack: FocusTrap[] = []
+interface Options extends $Options {}
 
-// export function useFocusTrap(
-//   target: MaybeRefOrGetter<HTMLElement | null | undefined>,
-//   options: Options = {},
-// ) {
-//   let trap: FocusTrap | null = null
-//   const TargetEl = toRef(target)
+const trapStack: FocusTrap[] = []
 
-//   watch(
-//     TargetEl,
-//     (el, prevEl) => {
-//       if (!el)
-//         return
-//       if (trap && el !== prevEl) {
-//         trap.updateContainerElements(el)
-//         return
-//       }
+export function useFocusTrap(
+  target: MaybeRefOrGetter<HTMLElement | null | undefined>,
+  options: Options = {}
+) {
+  let trap: FocusTrap | null = null
+  const createTrap = (el: HTMLElement) => createFocusTrap(el, { ...options, trapStack })
 
-//       trap = createFocusTrap(el, { ...options, trapStack })
-//       trapStack.push(trap)
-//     },
-//     { flush: 'post' },
-//   )
+  if (isWatchable(target)) {
+    watch(target, (el) => {
+      if (!el) return
+      if (trap) {
+        trap.updateContainerElements(el)
+        return
+      }
 
-//   onUnmounted(() => {
-//     if (trap) {
-//       trap.deactivate()
-//       const index = trapStack.indexOf(trap)
-//       if (index !== -1)
-//         trapStack.splice(index, 1)
-//       trap = null
-//     }
-//   })
+      trap = createTrap(el)
+      trapStack.push(trap)
+    })
+  } else if (target) {
+    trap = createTrap(target)
+    trapStack.push(trap)
+  }
 
-//   return {
-//     activate: () => trap?.activate(),
-//     pause: () => trap?.pause(),
-//     resume: () => trap?.unpause(),
-//   }
-// }
+  onScopeDispose(() => {
+    if (trap) {
+      trap.deactivate()
+      remove(trapStack, trap)
+      trap = null
+    }
+  })
+
+  return {
+    pause: () => trap?.pause(),
+    resume: () => trap?.unpause(),
+    activate: () => trap?.activate(),
+  }
+}
