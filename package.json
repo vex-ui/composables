@@ -12,6 +12,7 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false"
   },
   "dependencies": {
+    "@floating-ui/dom": "^1.5.1",
     "playwright": "^1.37.1",
     "vue": "^3.3.4"
   },
