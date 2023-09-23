@@ -8,7 +8,6 @@ let isAttached = false
 
 export function useEscapeKey(listener: Listener): () => void {
   if (!isClient) return noop
-
   if (!isAttached) {
     document.addEventListener('keydown', onEscape)
     isAttached = true
@@ -18,7 +17,6 @@ export function useEscapeKey(listener: Listener): () => void {
 
   const cleanup = () => remove(listeners, listener)
   onScopeDispose(cleanup)
-
   return cleanup
 }
 
