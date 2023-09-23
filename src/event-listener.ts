@@ -4,13 +4,6 @@ import { onScopeDispose, watch } from 'vue'
 
 type Options = AddEventListenerOptions
 
-export function useEventListener<E extends keyof HTMLElementEventMap>(
-  target: MaybeRefOrGetter<HTMLElement | null>,
-  event: E,
-  listener: (e: HTMLElementEventMap[E]) => void,
-  options?: Options
-): Fn
-
 export function useEventListener<E extends keyof WindowEventMap>(
   target: Window,
   event: E,
@@ -22,6 +15,13 @@ export function useEventListener<E extends keyof DocumentEventMap>(
   target: Document,
   event: E,
   listener: (e: DocumentEventMap[E]) => void,
+  options?: Options
+): Fn
+
+export function useEventListener<E extends keyof HTMLElementEventMap>(
+  target: MaybeRefOrGetter<HTMLElement | null>,
+  event: E,
+  listener: (e: HTMLElementEventMap[E]) => void,
   options?: Options
 ): Fn
 
