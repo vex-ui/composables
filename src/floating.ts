@@ -95,6 +95,7 @@ export function useFloating(
   // 📌 middleware
   // ----------------------------------------------------------------------------------------------------
 
+  // TODO: find a better place for the default middleware
   const _middleware = computed(() => {
     const mw = [
       offset(toValue(options.offset) ?? 4),
