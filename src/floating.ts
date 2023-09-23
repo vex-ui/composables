@@ -56,6 +56,11 @@ export interface UseFloatingOptions {
    * The distance between the referenceEl and the floatingEl
    */
   offset?: number
+
+  /**
+   * The distance between the viewport and the floatingEl
+   */
+  padding?: Padding
 }
 
 export function useFloating(
@@ -91,7 +96,11 @@ export function useFloating(
   // ----------------------------------------------------------------------------------------------------
 
   const _middleware = computed(() => {
-    const mw = [offset(toValue(options.offset) || 4), flip(), shift({ padding: 8 })]
+    const mw = [
+      offset(toValue(options.offset) ?? 4),
+      flip(),
+      shift({ padding: toValue(options.padding) ?? 8 }),
+    ]
 
     // size middleware needs to be towards the start according to the docs
     if (toValue(options.autoMinWidth)) {
