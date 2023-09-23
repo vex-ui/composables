@@ -69,8 +69,6 @@ export function useFloating(
     offset: 4,
   }
 ) {
-  // ----------------------------------------------------------------------------------------------------
-
   const FloatingEl = toRef(floating)
   const ReferenceEl = toRef(reference)
   const isFloatingElVisible = toRef(visible)
@@ -177,7 +175,7 @@ export function useFloating(
 
   onScopeDispose(() => autoUpdateCleanup?.())
 
-  // ----------------------------------------------------------------------------------------------------
+  //===
 
   watch(isFloatingElVisible, (visible) => {
     if (!visible) isPositioned.value = false
