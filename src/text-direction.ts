@@ -10,6 +10,7 @@ export const useTextDirection = createSharedComposable(() => {
 
   let dir = getDir()
   let trigger: Fn = noop
+
   const updateDir = () => {
     dir = getDir()
     trigger()
