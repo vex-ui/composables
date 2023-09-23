@@ -15,7 +15,13 @@ export function useEscapeKey(listener: Listener): () => void {
 
   listeners.push(listener)
 
-  const cleanup = () => remove(listeners, listener)
+  const cleanup = () => {
+    remove(listeners, listener)
+    if (!listeners.length) {
+      document.removeEventListener('keydown', onEscape)
+      isAttached = false
+    }
+  }
   onScopeDispose(cleanup)
   return cleanup
 }
