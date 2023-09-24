@@ -4,7 +4,7 @@
     "requireBranch": "main"
   },
   "hooks": {
-    "before:init": ["pnpm run test"]
+    "before:init": ["pnpm run test --run"]
   },
   "github": {
     "release": true
