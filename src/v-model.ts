@@ -1,12 +1,12 @@
-import { computed, getCurrentInstance } from 'vue'
+import { computed, getCurrentInstance, type Ref } from 'vue'
 import type { Getter } from '@/types'
 
-interface UseVModelOptions<T> {
+interface Options<T> {
   setter?: (newValue: T) => T
   eventName?: string
 }
 
-export function useVModel<T>(getter: Getter<T>, options: UseVModelOptions<T> = {}) {
+export function useVModel<T>(getter: Getter<T>, options: Options<T> = {}): Ref<T> {
   const { eventName = 'update:modelValue', setter } = options
   const vm = getCurrentInstance()
 
